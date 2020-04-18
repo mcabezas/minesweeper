@@ -20,6 +20,19 @@ func (m *memory) SaveBoard(board *Board) (string, error) {
 	return board.GameID, nil
 }
 
+func (m *memory) GetBoardByGameID(gameID string) (*Board, bool, error) {
+	board, ok := m.boards.Load(gameID)
+	if !ok {
+		return &Board{}, false, nil
+	}
+	return board.(*Board), true, nil
+}
+
+func (m *memory) DeleteBoard(gameID string) error {
+	m.boards.Delete(gameID)
+	return nil
+}
+
 func (m *memory) GetCell(gameID string, position Position) (*Cell, bool, error) {
 	if board, ok := m.boards.Load(gameID); ok {
 		board := board.(*Board)

@@ -1,7 +1,6 @@
 package board
 
 import (
-	"log"
 	"math/rand"
 
 	uuid "github.com/satori/go.uuid"
@@ -34,15 +33,19 @@ type Cell struct {
 
 type Factory struct {
 	Storage
+	// This attribute is used to setup a default percentage of cells having mines in a board
+	minesAveragePercentagePerBoardDefault int
 }
 
 type Storage interface {
 	SaveBoard(board *Board) (string, error)
+	GetBoardByGameID(gameID string) (*Board, bool, error)
+	DeleteBoard(gameID string) error
 	GetCell(gameID string, position Position) (*Cell, bool, error)
 	UpdateCell(gameID string, cell *Cell) error
 }
 
-func NewFactory(logger *log.Logger) *Factory {
+func NewFactory() *Factory {
 	return &Factory{Storage: newMemory()}
 }
 
@@ -51,6 +54,9 @@ func (f *Factory) NewBoard(gameID string, rows, columns int64, minesRate int) *B
 	for row := int64(0); row < rows; row++ {
 		for column := int64(0); column < columns; column++ {
 			pos := Position{Row: row, Column: column}
+
+			// When the random number is inside the passed rate
+			// then the cell will be set up with a mine
 			hasMine := rand.Intn(100) < minesRate
 			cells[pos] = &Cell{
 				Position: pos, Status: Unrevealed, HasMine: hasMine,
@@ -60,4 +66,10 @@ func (f *Factory) NewBoard(gameID string, rows, columns int64, minesRate int) *B
 	return &Board{
 		GameID: gameID, BoardID: uuid.NewV4().String(), Cells: cells,
 	}
+}
+
+func (f *Factory) CreateBoard(gameID string, rows, columns int64) (*Board, error) {
+	board := f.NewBoard(gameID, rows, columns, f.minesAveragePercentagePerBoardDefault)
+	_, err := f.SaveBoard(board)
+	return board, err
 }

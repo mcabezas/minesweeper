@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/mcabezas/minesweeper/board"
 	_ "github.com/mcabezas/minesweeper/docs"
 	"github.com/mcabezas/minesweeper/game"
 	"github.com/mcabezas/minesweeper/restapi"
@@ -27,7 +28,8 @@ func main() {
 	r := mux.NewRouter()
 	swaggerDoc(r)
 
-	gf := game.NewFactory()
+	bf := board.NewFactory()
+	gf := game.NewFactory(bf)
 	restapi.SetUpRoutes(gf, r)
 
 	logger.Println("http://localhost:" + serverPort)

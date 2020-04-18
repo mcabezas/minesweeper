@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
+	"github.com/mcabezas/minesweeper/board"
 	"github.com/mcabezas/minesweeper/game"
 )
 
@@ -46,7 +47,7 @@ func Test_CreateGameHandler(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			game := game.NewFactory()
+			game := game.NewFactory(board.NewFactory())
 			CreateGameHandler(game)(test.out, test.in)
 			if test.out.Code != test.expectedStatus {
 				t.Logf("expected: %d\ngot: %d\n", test.expectedStatus, test.out.Code)
@@ -57,7 +58,7 @@ func Test_CreateGameHandler(t *testing.T) {
 }
 
 func Test_GetGameHandler(t *testing.T) {
-	f := game.NewFactory()
+	f := game.NewFactory(board.NewFactory())
 	createdGame, _ := f.CreateGame(10, 10)
 
 	r := mux.NewRouter()
@@ -78,7 +79,7 @@ func Test_GetGameHandler(t *testing.T) {
 }
 
 func Test_CannotReturnFakeGames(t *testing.T) {
-	f := game.NewFactory()
+	f := game.NewFactory(board.NewFactory())
 	createdGame, _ := f.CreateGame(10, 10)
 
 	r := mux.NewRouter()

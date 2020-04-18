@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/mcabezas/minesweeper/board"
 )
 
 type Game struct {
@@ -13,16 +14,18 @@ type Game struct {
 	BoardID string
 }
 
-func NewGame(rows, columns int64) *Game {
+func NewGame(uuid, boardID string, rows, columns int64) *Game {
 	return &Game{
-		ID:      uuid.New().String(),
+		ID:      uuid,
 		Rows:    rows,
 		Columns: columns,
+		BoardID: boardID,
 	}
 }
 
 type Factory struct {
 	Storage
+	bf *board.Factory
 }
 
 type Storage interface {
@@ -30,13 +33,24 @@ type Storage interface {
 	GetGame(id string) (*Game, bool, error)
 }
 
-func NewFactory() *Factory {
-	return &Factory{Storage: newMemory()}
+func NewFactory(bf *board.Factory) *Factory {
+	return &Factory{Storage: newMemory(), bf: bf}
 }
 
 func (f *Factory) CreateGame(rows, columns int64) (*Game, error) {
-	game := NewGame(rows, columns)
-	_, err := f.SaveGame(game)
+	gameID := uuid.New().String()
+	board, err := f.bf.CreateBoard(gameID, rows, columns)
+	if err != nil {
+		return &Game{}, err
+	}
+	game := NewGame(gameID, board.BoardID, rows, columns)
+	_, err = f.SaveGame(game)
+	if err != nil {
+		// Manual Rollback assuming there is no RDBM's
+		// TODO Can be improved using channels to communicate both packages, I did not had time to implement it
+		_ = f.bf.DeleteBoard(gameID)
+		return &Game{}, err
+	}
 	return game, err
 }
 
