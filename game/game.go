@@ -5,12 +5,16 @@ import (
 )
 
 type Game struct {
-	ID      string
+	ID     string
+	Rows   int64
+	Column int64
 }
 
-func NewGame() *Game {
+func NewGame(rows, columns int64) *Game {
 	return &Game{
-		ID: uuid.New().String(),
+		ID:     uuid.New().String(),
+		Rows:   rows,
+		Column: columns,
 	}
 }
 
@@ -25,4 +29,10 @@ type Storage interface {
 
 func NewFactory() *Factory {
 	return &Factory{Storage: newMemory()}
+}
+
+func (f *Factory) CreateGame(rows, columns int64) (*Game, error) {
+	game := NewGame(rows, columns)
+	_, err := f.SaveGame(game)
+	return game, err
 }
