@@ -11,11 +11,11 @@ import (
 	"github.com/mcabezas/minesweeper/board/cell"
 )
 
-// RedFlag godoc
+// Cell godoc
 // @Summary Puts a flag into a specific cell
 // @Description Put a flag into a specific cell
-// @Tags RedFlag
-// @ID RedFlag
+// @Tags Cell
+// @ID Cell
 // @Accept  json
 // @Produce  json
 // @Success 200
@@ -52,11 +52,11 @@ func CreateFlagHandler(f *board.Factory) http.HandlerFunc {
 	}
 }
 
-// RedFlag godoc
+// Cell godoc
 // @Summary Remove a flag from a specific cell
 // @Description Remove a flag from a specific cell
-// @Tags Games
-// @ID Games
+// @Tags Cell
+// @ID Cell
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} restapi.FlagResponse

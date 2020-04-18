@@ -138,10 +138,10 @@
                     "application/json"
                 ],
                 "tags": [
-                    "RedFlag"
+                    "Cell"
                 ],
                 "summary": "Puts a flag into a specific cell",
-                "operationId": "RedFlag",
+                "operationId": "Cell",
                 "responses": {
                     "200": {},
                     "204": {},
@@ -158,10 +158,10 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Games"
+                    "Cell"
                 ],
                 "summary": "Remove a flag from a specific cell",
-                "operationId": "Games",
+                "operationId": "Cell",
                 "responses": {
                     "200": {
                         "description": "OK",

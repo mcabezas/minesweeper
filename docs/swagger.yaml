@@ -123,7 +123,7 @@ paths:
       consumes:
       - application/json
       description: Remove a flag from a specific cell
-      operationId: Games
+      operationId: Cell
       produces:
       - application/json
       responses:
@@ -136,12 +136,12 @@ paths:
         "500": {}
       summary: Remove a flag from a specific cell
       tags:
-      - Games
+      - Cell
     post:
       consumes:
       - application/json
       description: Put a flag into a specific cell
-      operationId: RedFlag
+      operationId: Cell
       produces:
       - application/json
       responses:
@@ -151,5 +151,5 @@ paths:
         "500": {}
       summary: Puts a flag into a specific cell
       tags:
-      - RedFlag
+      - Cell
 swagger: "2.0"
