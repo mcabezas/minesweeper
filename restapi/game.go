@@ -10,6 +10,16 @@ import (
 	"github.com/mcabezas/minesweeper/game"
 )
 
+// Games godoc
+// @Summary Creates a new game
+// @Description Creates a new game
+// @Tags Games
+// @ID Games
+// @Accept  json
+// @Produce  json
+// @Success 201 {object} restapi.CreateGameResponse
+// @Param CreateParams body restapi.CreateGameRequest true "Create Game input"
+// @Router /games [post]
 func CreateGameHandler(f *game.Factory) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var params CreateGameRequest
@@ -41,6 +51,16 @@ type CreateGameRequest struct {
 	Columns int64 `json:"columns"`
 }
 
+// Games godoc
+// @Summary Game
+// @Description Retrieves a Game by ID
+// @Tags Games
+// @ID Games
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} restapi.GetGameResponse
+// @Param game_id path string true "Game ID"
+// @Router /games/{game_id} [get]
 func GetGameHandler(f *game.Factory) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
