@@ -80,6 +80,53 @@
                     }
                 }
             }
+        },
+        "/games/{game_id}/cells/{row}/{column}": {
+            "patch": {
+                "description": "Reveal a Cell if it is available for that",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cell"
+                ],
+                "summary": "Patch a Cell",
+                "operationId": "Cell",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game ID",
+                        "name": "game_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Row",
+                        "name": "row",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Columns",
+                        "name": "column",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restapi.RevealCellResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -116,6 +163,14 @@
                 },
                 "rows": {
                     "type": "integer"
+                }
+            }
+        },
+        "restapi.RevealCellResponse": {
+            "type": "object",
+            "properties": {
+                "hasMine": {
+                    "type": "boolean"
                 }
             }
         }

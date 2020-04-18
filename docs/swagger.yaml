@@ -23,6 +23,11 @@ definitions:
       rows:
         type: integer
     type: object
+  restapi.RevealCellResponse:
+    properties:
+      hasMine:
+        type: boolean
+    type: object
 host: localhost:5000
 info:
   contact:
@@ -78,4 +83,36 @@ paths:
       summary: Game
       tags:
       - Games
+  /games/{game_id}/cells/{row}/{column}:
+    patch:
+      consumes:
+      - application/json
+      description: Reveal a Cell if it is available for that
+      operationId: Cell
+      parameters:
+      - description: Game ID
+        in: path
+        name: game_id
+        required: true
+        type: string
+      - description: Row
+        in: path
+        name: row
+        required: true
+        type: integer
+      - description: Columns
+        in: path
+        name: column
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restapi.RevealCellResponse'
+      summary: Patch a Cell
+      tags:
+      - Cell
 swagger: "2.0"

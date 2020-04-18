@@ -165,5 +165,4 @@ func Test_CannotRevealARevealedCell(t *testing.T) {
 	if status := resp.StatusCode; status != http.StatusForbidden {
 		t.Fatalf("wrong status code: got %d want %d", status, http.StatusForbidden)
 	}
-
 }

@@ -68,14 +68,13 @@ func RevealCellHandler(f *board.Factory) http.HandlerFunc {
 			return
 		}
 		res := &RevealCellResponse{
-			Cell:      *c,
+			HasMine: c.HasMine,
 		}
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(res)
+		err = json.NewEncoder(w).Encode(res)
 	}
 }
 
 type RevealCellResponse struct {
-	Cell      board.Cell `json:"cell"`
+	HasMine bool `json:"hasMine"`
 }
-
