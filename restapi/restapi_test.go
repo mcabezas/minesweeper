@@ -49,7 +49,7 @@ func Test_CreateGameHandler(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			game := game.NewFactory(board.NewFactory())
+			game := game.NewFactory(board.NewFactory(0))
 			CreateGameHandler(game)(test.out, test.in)
 			if test.out.Code != test.expectedStatus {
 				t.Logf("expected: %d\ngot: %d\n", test.expectedStatus, test.out.Code)
@@ -60,7 +60,7 @@ func Test_CreateGameHandler(t *testing.T) {
 }
 
 func Test_GetGameHandler(t *testing.T) {
-	f := game.NewFactory(board.NewFactory())
+	f := game.NewFactory(board.NewFactory(0))
 	createdGame, _ := f.CreateGame(10, 10)
 
 	r := mux.NewRouter()
@@ -81,7 +81,7 @@ func Test_GetGameHandler(t *testing.T) {
 }
 
 func Test_CannotReturnFakeGames(t *testing.T) {
-	f := game.NewFactory(board.NewFactory())
+	f := game.NewFactory(board.NewFactory(0))
 	createdGame, _ := f.CreateGame(10, 10)
 
 	r := mux.NewRouter()
@@ -102,7 +102,7 @@ func Test_CannotReturnFakeGames(t *testing.T) {
 }
 
 func Test_CanRevealCell(t *testing.T) {
-	bf := board.NewFactory()
+	bf := board.NewFactory(0)
 	f := game.NewFactory(bf)
 	game, _ := f.CreateGame(10, 10)
 	board, _, _ := bf.GetBoardByGameID(game.ID)
@@ -131,7 +131,7 @@ func Test_CanRevealCell(t *testing.T) {
 }
 
 func Test_CannotRevealARevealedCell(t *testing.T) {
-	bf := board.NewFactory()
+	bf := board.NewFactory(0)
 	f := game.NewFactory(bf)
 	game, _ := f.CreateGame(10, 10)
 	board, _, _ := bf.GetBoardByGameID(game.ID)

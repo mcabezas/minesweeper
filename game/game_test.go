@@ -8,7 +8,7 @@ import (
 )
 
 func TestFactory_CreateGame(t *testing.T) {
-	bf := board.NewFactory()
+	bf := board.NewFactory(0)
 	f := NewFactory(bf)
 	rows := 10
 	columns := 10
