@@ -12,21 +12,24 @@ definitions:
       gameID:
         type: string
     type: object
+  restapi.FlagResponse:
+    properties:
+      requestID:
+        type: string
+    type: object
   restapi.GetGameResponse:
     properties:
-      columns:
-        type: integer
       gameID:
         type: string
       requestID:
         type: string
-      rows:
-        type: integer
     type: object
   restapi.RevealCellResponse:
     properties:
-      hasMine:
+      mine:
         type: boolean
+      near_mines:
+        type: integer
     type: object
 host: localhost:5000
 info:
@@ -115,4 +118,38 @@ paths:
       summary: Patch a Cell
       tags:
       - Cell
+  /games/{game_id}/cells/{row}/{column}/flag:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a flag from a specific cell
+      operationId: Games
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restapi.FlagResponse'
+        "204": {}
+        "403": {}
+        "500": {}
+      summary: Remove a flag from a specific cell
+      tags:
+      - Games
+    post:
+      consumes:
+      - application/json
+      description: Put a flag into a specific cell
+      operationId: RedFlag
+      produces:
+      - application/json
+      responses:
+        "200": {}
+        "204": {}
+        "403": {}
+        "500": {}
+      summary: Puts a flag into a specific cell
+      tags:
+      - RedFlag
 swagger: "2.0"

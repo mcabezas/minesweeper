@@ -66,18 +66,14 @@ func RevealCellHandler(f *board.Factory) http.HandlerFunc {
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}
-		hasMine, nearMines, err := f.RevealCell(gameID, rows, columns, c)
+		revealedCells, err := f.RevealCell(gameID, rows, columns, c, map[cell.Position]bool{})
 		if err != nil {
 			log.Printf("There was an issue with the request %s\n", err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		res := &RevealCellResponse{
-			HasMine: hasMine,
-			NearMines: nearMines,
-		}
 		w.WriteHeader(http.StatusOK)
-		err = json.NewEncoder(w).Encode(res)
+		err = json.NewEncoder(w).Encode(revealedCells)
 	}
 }
 

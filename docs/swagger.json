@@ -127,6 +127,53 @@
                     }
                 }
             }
+        },
+        "/games/{game_id}/cells/{row}/{column}/flag": {
+            "post": {
+                "description": "Put a flag into a specific cell",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RedFlag"
+                ],
+                "summary": "Puts a flag into a specific cell",
+                "operationId": "RedFlag",
+                "responses": {
+                    "200": {},
+                    "204": {},
+                    "403": {},
+                    "500": {}
+                }
+            },
+            "delete": {
+                "description": "Remove a flag from a specific cell",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Games"
+                ],
+                "summary": "Remove a flag from a specific cell",
+                "operationId": "Games",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restapi.FlagResponse"
+                        }
+                    },
+                    "204": {},
+                    "403": {},
+                    "500": {}
+                }
+            }
         }
     },
     "definitions": {
@@ -149,28 +196,33 @@
                 }
             }
         },
+        "restapi.FlagResponse": {
+            "type": "object",
+            "properties": {
+                "requestID": {
+                    "type": "string"
+                }
+            }
+        },
         "restapi.GetGameResponse": {
             "type": "object",
             "properties": {
-                "columns": {
-                    "type": "integer"
-                },
                 "gameID": {
                     "type": "string"
                 },
                 "requestID": {
                     "type": "string"
-                },
-                "rows": {
-                    "type": "integer"
                 }
             }
         },
         "restapi.RevealCellResponse": {
             "type": "object",
             "properties": {
-                "hasMine": {
+                "mine": {
                     "type": "boolean"
+                },
+                "near_mines": {
+                    "type": "integer"
                 }
             }
         }

@@ -31,3 +31,5 @@ Step 7: First operational version
 Step 8: Added python api client
 
 Step 9 : Added flag cell
+
+Step 10: Added AWS stuff

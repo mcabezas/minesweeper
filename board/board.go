@@ -74,21 +74,50 @@ func (f *Factory) CanRevealCell(c *Cell) error {
 	return errors.New("INVALID_ACTION")
 }
 
-func (f *Factory) RevealCell(gameID string, rows, columns int64, c *Cell) (bool, int64, error) {
-	c.Status = cell.Revealed
-	if err := f.UpdateCell(gameID, c); err != nil {
-		return false, 0, err
-	}
-	nearMines, err := f.countAdjacentMines(gameID, c.Position, rows, columns)
-	if err != nil {
-		return false, 0, err
-	}
-	return c.HasMine, nearMines, nil
+type ReveleadCell struct {
+	Row       int64 `json:"row"`
+	Columns   int64 `json:"column"`
+	HasMine   bool  `json:"has_mine"`
+	NearMines int64 `json:"near_mines"`
 }
 
-func (f *Factory) countAdjacentMines(gameID string, pos cell.Position, rows, columns int64) (int64, error) {
+func (f *Factory) RevealCell(gameID string, rows, columns int64, c *Cell, reviewed map[cell.Position]bool) ([]ReveleadCell, error) {
+	revealedCells := []ReveleadCell{}
+	if reviewed[c.Position] {
+		return revealedCells, nil
+	}
+	reviewed[c.Position] = true
+	c.Status = cell.Revealed
+	if err := f.UpdateCell(gameID, c); err != nil {
+		return revealedCells, err
+	}
+	adjacentPositions := GetAdjacentPositions(c.Position, rows, columns)
+	nearMines, err := f.countAdjacentMines(gameID, adjacentPositions)
+	if err != nil {
+		return revealedCells, err
+	}
+
+	// Revealing adjacent cells with there is no nearMines
+	if nearMines == 0 {
+		for _, pos := range adjacentPositions {
+			c, found, err := f.GetCell(gameID, pos)
+			if err == nil && found {
+				cells, err := f.RevealCell(gameID, rows, columns, c, reviewed)
+				if err != nil {
+					revealedCells = append(revealedCells, cells...)
+				}
+			}
+		}
+	}
+	revealedCells = append(revealedCells, ReveleadCell{
+		Row: c.Row, Columns: c.Column, HasMine: c.HasMine, NearMines: nearMines,
+	})
+	return revealedCells, nil
+}
+
+func (f *Factory) countAdjacentMines(gameID string, adjacentPositions []cell.Position) (int64, error) {
 	var nearMines int64
-	for _, pos := range GetAdjacentPositions(pos, rows, columns) {
+	for _, pos := range adjacentPositions {
 		cell, _, err := f.GetCell(gameID, pos)
 		if err != nil {
 			return 0, err
