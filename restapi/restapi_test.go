@@ -25,6 +25,13 @@ func Test_CreateGameHandler(t *testing.T) {
 			out: httptest.NewRecorder(),
 			expectedStatus: http.StatusCreated,
 		},
+		{
+			name: "create",
+
+			in: httptest.NewRequest("POST", "/games", strings.NewReader(`{"rows":5, "columns":0}`)),
+			out: httptest.NewRecorder(),
+			expectedStatus: http.StatusBadRequest,
+		},
 	}
 	for _, test := range tests {
 		test := test

@@ -1,6 +1,8 @@
 package game
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 )
 
@@ -35,4 +37,11 @@ func (f *Factory) CreateGame(rows, columns int64) (*Game, error) {
 	game := NewGame(rows, columns)
 	_, err := f.SaveGame(game)
 	return game, err
+}
+
+func (f *Factory) CheckGameCreationParameters(rows, columns int64) error {
+	if rows == 0 || columns == 0 {
+		return errors.New("INVALID_PARAMETERS")
+	}
+	return nil
 }

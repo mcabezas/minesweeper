@@ -27,6 +27,11 @@ func CreateGameHandler(f *game.Factory) http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
+		if err :=f.CheckGameCreationParameters(params.Rows, params.Columns); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
 		game, err := f.CreateGame(params.Rows, params.Columns)
 		if err != nil {
 			log.Printf("There was an issue with the request %s\n", err.Error())
