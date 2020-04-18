@@ -26,3 +26,8 @@ Step 5: Attaching board creation to game creation API
     
 Step 6: Creating endpoint for Cells ``Reveal``  action (click cell)
 
+Step 7: First operational version
+
+Step 8: Added python api client
+
+Step 9 : Added flag cell

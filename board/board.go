@@ -20,6 +20,7 @@ type Cell struct {
 	cell.Position
 	cell.Status
 	HasMine bool
+	RedFlag bool
 }
 
 type Factory struct {
@@ -159,4 +160,28 @@ func GetAdjacentPositions(center cell.Position, rows, cols int64) []cell.Positio
 		adjacents = append(adjacents, cell.Position{Row: row, Column: col})
 	}
 	return adjacents
+}
+
+func (f *Factory) CanFlag(c *Cell) error {
+	if c.Status == cell.Unrevealed || !c.RedFlag {
+		return nil
+	}
+	return errors.New("INVALID_ACTION")
+}
+
+func (f *Factory) CanRemoveFlag(c *Cell) error {
+	if c.Status == cell.Unrevealed || c.RedFlag {
+		return nil
+	}
+	return errors.New("INVALID_ACTION")
+}
+
+func (f *Factory) DoFlag(gameID string, cell *Cell) error {
+	cell.RedFlag = true
+	return f.UpdateCell(gameID, cell)
+}
+
+func (f *Factory) RemoveFlag(gameID string, cell *Cell) error {
+	cell.RedFlag = false
+	return f.UpdateCell(gameID, cell)
 }
