@@ -1,0 +1,123 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Minesweeper API implementation",
+        "title": "Minesweeper Go Restful API",
+        "contact": {
+            "name": "Marcelo Cabezas",
+            "email": "mcabezas@outlook.com"
+        },
+        "license": {},
+        "version": "1.0"
+    },
+    "host": "localhost:5000",
+    "basePath": "/",
+    "paths": {
+        "/games": {
+            "post": {
+                "description": "Creates a new game",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Games"
+                ],
+                "summary": "Creates a new game",
+                "operationId": "Games",
+                "parameters": [
+                    {
+                        "description": "Create Game input",
+                        "name": "CreateParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/restapi.CreateGameRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/restapi.CreateGameResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/games/{game_id}": {
+            "get": {
+                "description": "Retrieves a Game by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Games"
+                ],
+                "summary": "Game",
+                "operationId": "Games",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game ID",
+                        "name": "game_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/restapi.GetGameResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "restapi.CreateGameRequest": {
+            "type": "object",
+            "properties": {
+                "columns": {
+                    "type": "integer"
+                },
+                "rows": {
+                    "type": "integer"
+                }
+            }
+        },
+        "restapi.CreateGameResponse": {
+            "type": "object",
+            "properties": {
+                "gameID": {
+                    "type": "string"
+                }
+            }
+        },
+        "restapi.GetGameResponse": {
+            "type": "object",
+            "properties": {
+                "columns": {
+                    "type": "integer"
+                },
+                "gameID": {
+                    "type": "string"
+                },
+                "requestID": {
+                    "type": "string"
+                },
+                "rows": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

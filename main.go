@@ -6,10 +6,10 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	_ "github.com/mcabezas/minesweeper/docs"
 	"github.com/mcabezas/minesweeper/game"
 	"github.com/mcabezas/minesweeper/restapi"
 	httpSwagger "github.com/swaggo/http-swagger"
-
 )
 
 // @title Minesweeper Go Restful API

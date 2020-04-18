@@ -10,3 +10,9 @@ Step 2:
 
 Step 3:
   Swagger documentation setup
+
+Step 4: I have identified a new entity -> The GameBoard (Board)
+ * The Board has attached all the board cells
+ * I have been working on the Board creation scenario
+ * I have decided to use a map for the board to hold all the Cells
+   This decision will give me the change to have a lineal complexity when I have to manipulate them.

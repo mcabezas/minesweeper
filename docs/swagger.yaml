@@ -1,0 +1,81 @@
+basePath: /
+definitions:
+  restapi.CreateGameRequest:
+    properties:
+      columns:
+        type: integer
+      rows:
+        type: integer
+    type: object
+  restapi.CreateGameResponse:
+    properties:
+      gameID:
+        type: string
+    type: object
+  restapi.GetGameResponse:
+    properties:
+      columns:
+        type: integer
+      gameID:
+        type: string
+      requestID:
+        type: string
+      rows:
+        type: integer
+    type: object
+host: localhost:5000
+info:
+  contact:
+    email: mcabezas@outlook.com
+    name: Marcelo Cabezas
+  description: Minesweeper API implementation
+  license: {}
+  title: Minesweeper Go Restful API
+  version: "1.0"
+paths:
+  /games:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new game
+      operationId: Games
+      parameters:
+      - description: Create Game input
+        in: body
+        name: CreateParams
+        required: true
+        schema:
+          $ref: '#/definitions/restapi.CreateGameRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/restapi.CreateGameResponse'
+      summary: Creates a new game
+      tags:
+      - Games
+  /games/{game_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a Game by ID
+      operationId: Games
+      parameters:
+      - description: Game ID
+        in: path
+        name: game_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restapi.GetGameResponse'
+      summary: Game
+      tags:
+      - Games
+swagger: "2.0"

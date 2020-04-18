@@ -27,7 +27,7 @@ func CreateGameHandler(f *game.Factory) http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		if err :=f.CheckGameCreationParameters(params.Rows, params.Columns); err != nil {
+		if err := f.CheckGameCreationParameters(params.Rows, params.Columns); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -39,7 +39,7 @@ func CreateGameHandler(f *game.Factory) http.HandlerFunc {
 			return
 		}
 		res := &CreateGameResponse{
-			GameID:    game.ID,
+			GameID: game.ID,
 		}
 
 		w.WriteHeader(http.StatusCreated)
@@ -48,7 +48,7 @@ func CreateGameHandler(f *game.Factory) http.HandlerFunc {
 }
 
 type CreateGameResponse struct {
-	GameID    string `json:"gameID"`
+	GameID string `json:"gameID"`
 }
 
 type CreateGameRequest struct {
@@ -86,9 +86,9 @@ func GetGameHandler(f *game.Factory) http.HandlerFunc {
 			return
 		}
 		res := &GetGameResponse{
-			GameID:    game.ID,
-			Rows:      game.Rows,
-			Columns:   game.Columns,
+			GameID:  game.ID,
+			Rows:    game.Rows,
+			Columns: game.Columns,
 		}
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(res)

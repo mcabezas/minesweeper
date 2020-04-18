@@ -20,16 +20,26 @@ func Test_CreateGameHandler(t *testing.T) {
 	}{
 		{
 			name: "create",
-
-			in: httptest.NewRequest("POST", "/games", strings.NewReader(`{"rows":5, "columns":5}`)),
-			out: httptest.NewRecorder(),
+			in:             httptest.NewRequest("POST", "/games", strings.NewReader(`{"rows":5, "columns":5}`)),
+			out:            httptest.NewRecorder(),
 			expectedStatus: http.StatusCreated,
 		},
 		{
-			name: "create",
-
-			in: httptest.NewRequest("POST", "/games", strings.NewReader(`{"rows":5, "columns":0}`)),
-			out: httptest.NewRecorder(),
+			name: "create with column value 0",
+			in:             httptest.NewRequest("POST", "/games", strings.NewReader(`{"rows":5, "columns":0}`)),
+			out:            httptest.NewRecorder(),
+			expectedStatus: http.StatusBadRequest,
+		},
+		{
+			name: "create with row value 0",
+			in:             httptest.NewRequest("POST", "/games", strings.NewReader(`{"rows":0, "columns":5}`)),
+			out:            httptest.NewRecorder(),
+			expectedStatus: http.StatusBadRequest,
+		},
+		{
+			name: "create with row & column values 0",
+			in:             httptest.NewRequest("POST", "/games", strings.NewReader(`{"rows":0, "columns":0}`)),
+			out:            httptest.NewRecorder(),
 			expectedStatus: http.StatusBadRequest,
 		},
 	}
@@ -56,7 +66,7 @@ func Test_GetGameHandler(t *testing.T) {
 	ts := httptest.NewServer(r)
 	defer ts.Close()
 
-	url := ts.URL + "/games/"+createdGame.ID
+	url := ts.URL + "/games/" + createdGame.ID
 	resp, err := http.Get(url)
 	if err != nil {
 		t.Fatal(err)
@@ -77,7 +87,7 @@ func Test_CannotReturnFakeGames(t *testing.T) {
 	ts := httptest.NewServer(r)
 	defer ts.Close()
 
-	url := ts.URL + "/games/"+createdGame.ID+"fakefake"
+	url := ts.URL + "/games/" + createdGame.ID + "fakefake"
 	resp, err := http.Get(url)
 	if err != nil {
 		t.Fatal(err)

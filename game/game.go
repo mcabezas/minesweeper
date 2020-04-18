@@ -10,6 +10,7 @@ type Game struct {
 	ID      string
 	Rows    int64
 	Columns int64
+	BoardID string
 }
 
 func NewGame(rows, columns int64) *Game {
