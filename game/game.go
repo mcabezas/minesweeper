@@ -9,16 +9,12 @@ import (
 
 type Game struct {
 	ID      string
-	Rows    int64
-	Columns int64
 	BoardID string
 }
 
-func NewGame(uuid, boardID string, rows, columns int64) *Game {
+func NewGame(uuid, boardID string) *Game {
 	return &Game{
 		ID:      uuid,
-		Rows:    rows,
-		Columns: columns,
 		BoardID: boardID,
 	}
 }
@@ -43,7 +39,7 @@ func (f *Factory) CreateGame(rows, columns int64) (*Game, error) {
 	if err != nil {
 		return &Game{}, err
 	}
-	game := NewGame(gameID, board.BoardID, rows, columns)
+	game := NewGame(gameID, board.BoardID)
 	_, err = f.SaveGame(game)
 	if err != nil {
 		// Manual Rollback assuming there is no RDBM's

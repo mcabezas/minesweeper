@@ -28,7 +28,7 @@ func main() {
 	r := mux.NewRouter()
 	swaggerDoc(r)
 
-	bf := board.NewFactory()
+	bf := board.NewFactory(50)
 	gf := game.NewFactory(bf)
 	restapi.SetUpRoutes(gf, bf, r)
 

@@ -87,8 +87,6 @@ func GetGameHandler(f *game.Factory) http.HandlerFunc {
 		}
 		res := &GetGameResponse{
 			GameID:  game.ID,
-			Rows:    game.Rows,
-			Columns: game.Columns,
 		}
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(res)
@@ -98,6 +96,4 @@ func GetGameHandler(f *game.Factory) http.HandlerFunc {
 type GetGameResponse struct {
 	RequestID string `json:"requestID"`
 	GameID    string `json:"gameID"`
-	Rows      int64  `json:"rows"`
-	Columns   int64  `json:"columns"`
 }

@@ -8,10 +8,11 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-
 type Board struct {
 	GameID  string
 	BoardID string
+	Rows    int64
+	Columns int64
 	Cells   map[cell.Position]*Cell
 }
 
@@ -30,13 +31,14 @@ type Factory struct {
 type Storage interface {
 	SaveBoard(board *Board) (string, error)
 	GetBoardByGameID(gameID string) (*Board, bool, error)
+	GetBoardSizeByGameID(gameID string) (int64, int64, bool, error)
 	DeleteBoard(gameID string) error
 	GetCell(gameID string, position cell.Position) (*Cell, bool, error)
 	UpdateCell(gameID string, cell *Cell) error
 }
 
-func NewFactory() *Factory {
-	return &Factory{Storage: newMemory()}
+func NewFactory(minesRatePercentage int) *Factory {
+	return &Factory{Storage: newMemory(), minesAveragePercentagePerBoardDefault: minesRatePercentage}
 }
 
 func (f *Factory) NewBoard(gameID string, rows, columns int64, minesRate int) *Board {
@@ -54,7 +56,7 @@ func (f *Factory) NewBoard(gameID string, rows, columns int64, minesRate int) *B
 		}
 	}
 	return &Board{
-		GameID: gameID, BoardID: uuid.NewV4().String(), Cells: cells,
+		GameID: gameID, BoardID: uuid.NewV4().String(), Cells: cells, Rows: rows, Columns: columns,
 	}
 }
 
@@ -71,3 +73,90 @@ func (f *Factory) CanRevealCell(c *Cell) error {
 	return errors.New("INVALID_ACTION")
 }
 
+func (f *Factory) RevealCell(gameID string, rows, columns int64, c *Cell) (bool, int64, error) {
+	c.Status = cell.Revealed
+	if err := f.UpdateCell(gameID, c); err != nil {
+		return false, 0, err
+	}
+	nearMines, err := f.countAdjacentMines(gameID, c.Position, rows, columns)
+	if err != nil {
+		return false, 0, err
+	}
+	return c.HasMine, nearMines, nil
+}
+
+func (f *Factory) countAdjacentMines(gameID string, pos cell.Position, rows, columns int64) (int64, error) {
+	var nearMines int64
+	for _, pos := range GetAdjacentPositions(pos, rows, columns) {
+		cell, _, err := f.GetCell(gameID, pos)
+		if err != nil {
+			return 0, err
+		}
+		if cell.HasMine {
+			nearMines++
+		}
+	}
+	return nearMines, nil
+}
+
+func GetAdjacentPositions(center cell.Position, rows, cols int64) []cell.Position {
+	var row, col int64
+	adjacents := []cell.Position{}
+
+	// Adding TOP CELL to adjacent slice
+	row = center.Row + 1
+	col = center.Column
+	if row >= 0 && row < rows && col >= 0 && col < cols {
+		adjacents = append(adjacents, cell.Position{Row: row, Column: col})
+	}
+
+	// Adding DOWN CELL to adjacent slice
+	row = center.Row - 1
+	col = center.Column
+	if row >= 0 && row < rows && col >= 0 && col < cols {
+		adjacents = append(adjacents, cell.Position{Row: row, Column: col})
+	}
+
+	// Adding LEFT CELL to adjacent slice
+	row = center.Row
+	col = center.Column - 1
+	if row >= 0 && row < rows && col >= 0 && col < cols {
+		adjacents = append(adjacents, cell.Position{Row: row, Column: col})
+	}
+
+	// Adding RIGHT CELL to adjacent slice
+	row = center.Row
+	col = center.Column + 1
+	if row >= 0 && row < rows && col >= 0 && col < cols {
+		adjacents = append(adjacents, cell.Position{Row: row, Column: col})
+	}
+
+	// Adding LEFT-TOP CELL to adjacent slice
+	row = center.Row + 1
+	col = center.Column - 1
+	if row >= 0 && row < rows && col >= 0 && col < cols {
+		adjacents = append(adjacents, cell.Position{Row: row, Column: col})
+	}
+
+	// Adding RIGHT-TOP CELL to adjacent slice
+	row = center.Row + 1
+	col = center.Column + 1
+	if row >= 0 && row < rows && col >= 0 && col < cols {
+		adjacents = append(adjacents, cell.Position{Row: row, Column: col})
+	}
+
+	// Adding LEFT-DOWN CELL to adjacent slice
+	row = center.Row - 1
+	col = center.Column - 1
+	if row >= 0 && row < rows && col >= 0 && col < cols {
+		adjacents = append(adjacents, cell.Position{Row: row, Column: col})
+	}
+
+	// Adding RIGHT-DOWN CELL to adjacent slice
+	row = center.Row - 1
+	col = center.Column + 1
+	if row >= 0 && row < rows && col >= 0 && col < cols {
+		adjacents = append(adjacents, cell.Position{Row: row, Column: col})
+	}
+	return adjacents
+}
