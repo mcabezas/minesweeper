@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/mcabezas/minesweeper/common"
 	"github.com/mcabezas/minesweeper/game"
 )
@@ -19,7 +20,7 @@ func CreateGameHandler(f *game.Factory) http.HandlerFunc {
 		game, err := f.CreateGame(params.Rows, params.Columns)
 		if err != nil {
 			log.Printf("There was an issue with the request %s\n", err.Error())
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		res := &CreateGameResponse{
@@ -40,3 +41,38 @@ type CreateGameRequest struct {
 	Columns int64 `json:"columns"`
 }
 
+func GetGameHandler(f *game.Factory) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		gameID, found := vars["gameID"]
+		if !found {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		game, found, err := f.GetGame(gameID)
+		if err != nil {
+			log.Printf("There was an issue with the request %s\n", err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		if !found {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		res := &GetGameResponse{
+			GameID:    game.ID,
+			Rows:      game.Rows,
+			Columns:   game.Columns,
+		}
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(res)
+	}
+}
+
+type GetGameResponse struct {
+	RequestID string `json:"requestID"`
+	GameID    string `json:"gameID"`
+	Rows      int64  `json:"rows"`
+	Columns   int64  `json:"columns"`
+}

@@ -7,4 +7,5 @@ import (
 
 func SetUpRoutes(gf *game.Factory, r *mux.Router) {
 	r.HandleFunc("/games", CreateGameHandler(gf)).Methods("POST")
+	r.HandleFunc("/games/{gameID}", GetGameHandler(gf)).Methods("GET")
 }

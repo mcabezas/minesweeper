@@ -5,16 +5,16 @@ import (
 )
 
 type Game struct {
-	ID     string
-	Rows   int64
-	Column int64
+	ID      string
+	Rows    int64
+	Columns int64
 }
 
 func NewGame(rows, columns int64) *Game {
 	return &Game{
-		ID:     uuid.New().String(),
-		Rows:   rows,
-		Column: columns,
+		ID:      uuid.New().String(),
+		Rows:    rows,
+		Columns: columns,
 	}
 }
 

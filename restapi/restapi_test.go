@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gorilla/mux"
 	"github.com/mcabezas/minesweeper/game"
 )
 
@@ -36,4 +37,46 @@ func Test_CreateGameHandler(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_GetGameHandler(t *testing.T) {
+	f := game.NewFactory()
+	createdGame, _ := f.CreateGame(10, 10)
+
+	r := mux.NewRouter()
+	r.HandleFunc("/games/{gameID}", GetGameHandler(f)).Methods("GET")
+
+	ts := httptest.NewServer(r)
+	defer ts.Close()
+
+	url := ts.URL + "/games/"+createdGame.ID
+	resp, err := http.Get(url)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if status := resp.StatusCode; status != http.StatusOK {
+		t.Fatalf("wrong status code: got %d want %d", status, http.StatusOK)
+	}
+
+}
+
+func Test_CannotReturnFakeGames(t *testing.T) {
+	f := game.NewFactory()
+	createdGame, _ := f.CreateGame(10, 10)
+
+	r := mux.NewRouter()
+	r.HandleFunc("/games/{gameID}", GetGameHandler(f)).Methods("GET")
+
+	ts := httptest.NewServer(r)
+	defer ts.Close()
+
+	url := ts.URL + "/games/"+createdGame.ID+"fakefake"
+	resp, err := http.Get(url)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if status := resp.StatusCode; status != http.StatusNoContent {
+		t.Fatalf("wrong status code: got %d want %d", status, http.StatusNoContent)
+	}
+
 }
