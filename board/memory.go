@@ -3,6 +3,8 @@ package board
 import (
 	"errors"
 	"sync"
+
+	"github.com/mcabezas/minesweeper/board/cell"
 )
 
 type memory struct {
@@ -33,7 +35,7 @@ func (m *memory) DeleteBoard(gameID string) error {
 	return nil
 }
 
-func (m *memory) GetCell(gameID string, position Position) (*Cell, bool, error) {
+func (m *memory) GetCell(gameID string, position cell.Position) (*Cell, bool, error) {
 	if board, ok := m.boards.Load(gameID); ok {
 		board := board.(*Board)
 		cell := board.Cells[position]

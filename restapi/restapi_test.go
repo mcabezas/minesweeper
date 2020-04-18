@@ -1,6 +1,7 @@
 package restapi
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/mcabezas/minesweeper/board"
+	"github.com/mcabezas/minesweeper/board/cell"
 	"github.com/mcabezas/minesweeper/game"
 )
 
@@ -95,6 +97,73 @@ func Test_CannotReturnFakeGames(t *testing.T) {
 	}
 	if status := resp.StatusCode; status != http.StatusNoContent {
 		t.Fatalf("wrong status code: got %d want %d", status, http.StatusNoContent)
+	}
+
+}
+
+func Test_CanRevealCell(t *testing.T) {
+	bf := board.NewFactory()
+	f := game.NewFactory(bf)
+	game, _ := f.CreateGame(10, 10)
+	board, _, _ := bf.GetBoardByGameID(game.ID)
+	var unreveleadPos cell.Position
+	for _, c := range board.Cells {
+		if c.Status == cell.Unrevealed {
+			unreveleadPos = c.Position
+			break
+		}
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/games/{gameID}/cells/{row}/{column}", RevealCellHandler(bf)).Methods("POST")
+
+	ts := httptest.NewServer(r)
+	defer ts.Close()
+
+	url := fmt.Sprintf("%s/games/%s/cells/%d/%d", ts.URL, game.ID, unreveleadPos.Row, unreveleadPos.Column)
+	resp, err := http.Post(url, "application/json", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if status := resp.StatusCode; status != http.StatusOK {
+		t.Fatalf("wrong status code: got %d want %d", status, http.StatusOK)
+	}
+}
+
+func Test_CannotRevealARevealedCell(t *testing.T) {
+	bf := board.NewFactory()
+	f := game.NewFactory(bf)
+	game, _ := f.CreateGame(10, 10)
+	board, _, _ := bf.GetBoardByGameID(game.ID)
+	var unreveleadPos cell.Position
+	for _, c := range board.Cells {
+		if c.Status == cell.Unrevealed {
+			unreveleadPos = c.Position
+			break
+		}
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/games/{gameID}/cells/{row}/{column}", RevealCellHandler(bf)).Methods("POST")
+
+	ts := httptest.NewServer(r)
+	defer ts.Close()
+
+	url := fmt.Sprintf("%s/games/%s/cells/%d/%d", ts.URL, game.ID, unreveleadPos.Row, unreveleadPos.Column)
+	resp, err := http.Post(url, "application/json", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if status := resp.StatusCode; status != http.StatusOK {
+		t.Fatalf("wrong status code: got %d want %d", status, http.StatusOK)
+	}
+
+	resp, err = http.Post(url, "application/json", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if status := resp.StatusCode; status != http.StatusForbidden {
+		t.Fatalf("wrong status code: got %d want %d", status, http.StatusForbidden)
 	}
 
 }

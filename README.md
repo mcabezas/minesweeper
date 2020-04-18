@@ -23,4 +23,6 @@ Step 5: Attaching board creation to game creation API
   * Because I'm doing a big abstraction on regards of the Storage there are no guarantees of having
     the change to use relational transactions for rollback.
     Because of that I will do a very tiny implementation of saga patter for rollback
-      
+    
+Step 6: Creating endpoint for Cells ``Reveal``  action (click cell)
+

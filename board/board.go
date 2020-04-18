@@ -1,33 +1,23 @@
 package board
 
 import (
+	"errors"
 	"math/rand"
 
+	"github.com/mcabezas/minesweeper/board/cell"
 	uuid "github.com/satori/go.uuid"
 )
 
-type Position struct {
-	Row    int64
-	Column int64
-}
 
 type Board struct {
 	GameID  string
 	BoardID string
-	Cells   map[Position]*Cell
+	Cells   map[cell.Position]*Cell
 }
 
-type Status int
-
-const (
-	Invalid = iota
-	Revealed
-	Unrevealed
-)
-
 type Cell struct {
-	Position
-	Status
+	cell.Position
+	cell.Status
 	HasMine bool
 }
 
@@ -41,7 +31,7 @@ type Storage interface {
 	SaveBoard(board *Board) (string, error)
 	GetBoardByGameID(gameID string) (*Board, bool, error)
 	DeleteBoard(gameID string) error
-	GetCell(gameID string, position Position) (*Cell, bool, error)
+	GetCell(gameID string, position cell.Position) (*Cell, bool, error)
 	UpdateCell(gameID string, cell *Cell) error
 }
 
@@ -50,16 +40,16 @@ func NewFactory() *Factory {
 }
 
 func (f *Factory) NewBoard(gameID string, rows, columns int64, minesRate int) *Board {
-	cells := make(map[Position]*Cell)
+	cells := make(map[cell.Position]*Cell)
 	for row := int64(0); row < rows; row++ {
 		for column := int64(0); column < columns; column++ {
-			pos := Position{Row: row, Column: column}
+			pos := cell.Position{Row: row, Column: column}
 
 			// When the random number is inside the passed rate
 			// then the cell will be set up with a mine
 			hasMine := rand.Intn(100) < minesRate
 			cells[pos] = &Cell{
-				Position: pos, Status: Unrevealed, HasMine: hasMine,
+				Position: pos, Status: cell.Unrevealed, HasMine: hasMine,
 			}
 		}
 	}
@@ -73,3 +63,11 @@ func (f *Factory) CreateBoard(gameID string, rows, columns int64) (*Board, error
 	_, err := f.SaveBoard(board)
 	return board, err
 }
+
+func (f *Factory) CanRevealCell(c *Cell) error {
+	if c.Status == cell.Unrevealed {
+		return nil
+	}
+	return errors.New("INVALID_ACTION")
+}
+

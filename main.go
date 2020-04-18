@@ -30,7 +30,7 @@ func main() {
 
 	bf := board.NewFactory()
 	gf := game.NewFactory(bf)
-	restapi.SetUpRoutes(gf, r)
+	restapi.SetUpRoutes(gf, bf, r)
 
 	logger.Println("http://localhost:" + serverPort)
 	log.Fatal(http.ListenAndServe(":"+serverPort, r))
